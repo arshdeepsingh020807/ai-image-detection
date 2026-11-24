@@ -1,0 +1,31 @@
+{
+ "band": {
+  "low": 0.2,
+  "high": 0.8
+ },
+ "image": {
+  "width": 1024,
+  "height": 512,
+  "format": "JPEG",
+  "size_bytes": 245760
+ },
+ "timing_ms": {
+  "decode": 4.2,
+  "preprocess": 2.1,
+  "inference": 38.6,
+  "explain": 0.0,
+  "total": 44.9
+ },
+ "model": {
+  "architecture": "efficientnet_b0",
+  "version": "fixture-v1",
+  "trained": true
+ },
+ "label": "real",
+ "probabilities": {
+  "real": 0.88,
+  "ai_generated": 0.12
+ },
+ "confidence": 0.88,
+ "explanation": null
+}

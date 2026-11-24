@@ -1,0 +1,12 @@
+-r backend/requirements.txt
+torch>=2.5
+torchvision>=0.20
+timm>=1.0
+onnx>=1.17
+onnxscript>=0.1
+scikit-learn>=1.5
+imagehash>=4.3
+pandas>=2.2
+matplotlib>=3.9
+pyyaml>=6.0
+tqdm>=4.66

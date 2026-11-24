@@ -1,0 +1,200 @@
+{
+  "original_images": 179920,
+  "cleaned_images": 175100,
+  "removed_images": 4820,
+  "removed_by_reason": {
+    "conflicting_label": 1506,
+    "exact_duplicate": 293,
+    "external_leak": 3018,
+    "unsupported_format": 3
+  },
+  "exact_duplicates_removed": 293,
+  "near_duplicate_clusters": 10276,
+  "images_in_near_duplicate_clusters": 22903,
+  "class_distribution": {
+    "real": 87339,
+    "ai_generated": 87761
+  },
+  "by_source": {
+    "ai_detection": {
+      "real": 23970,
+      "ai_generated": 23969,
+      "role": "train_pool",
+      "domain": "general"
+    },
+    "deepdetect": {
+      "real": 56759,
+      "ai_generated": 50791,
+      "role": "train_pool",
+      "domain": "faces"
+    },
+    "labeled_deepfake": {
+      "real": 5871,
+      "ai_generated": 12178,
+      "role": "external",
+      "domain": "faces"
+    },
+    "midjourney_imagenet": {
+      "real": 739,
+      "ai_generated": 823,
+      "role": "external",
+      "domain": "general"
+    }
+  },
+  "by_generator": {
+    "DALL-E": 2000,
+    "DeepFaceLab": 1591,
+    "Face2Face": 1000,
+    "FaceShifter": 1000,
+    "FaceSwap": 1600,
+    "Midjourney": 930,
+    "NeuralTextures": 1000,
+    "Stable Diffusion": 2098,
+    "StyleGAN": 959,
+    "midjourney": 823,
+    "mixed_mj_dalle_sd": 23969,
+    "unknown_fake": 50791
+  },
+  "formats": {
+    "ai_generated": {
+      "JPEG": 82762,
+      "PNG": 4999
+    },
+    "real": {
+      "JPEG": 87106,
+      "PNG": 233
+    }
+  },
+  "resolution_top": {
+    "256x256": 167444,
+    "1024x1024": 831,
+    "300x300": 687,
+    "457x256": 397,
+    "256x384": 348,
+    "384x256": 323,
+    "256x320": 215,
+    "525x525": 137,
+    "256x457": 136,
+    "612x408": 134
+  },
+  "splits": {
+    "train": {
+      "real": 56510,
+      "ai_generated": 52332
+    },
+    "val": {
+      "real": 12109,
+      "ai_generated": 11213
+    },
+    "test": {
+      "real": 12110,
+      "ai_generated": 11215
+    },
+    "external": {
+      "real": 6610,
+      "ai_generated": 13001
+    }
+  },
+  "leakage_check": {
+    "exact_duplicate_leaks": 0,
+    "near_duplicate_leaks": 0
+  },
+  "shortcut_probes": {
+    "ai_detection/file_format": {
+      "auc": 0.643067685,
+      "accuracy": 0.59035,
+      "n": 20000,
+      "features": [
+        "is_png",
+        "width",
+        "height",
+        "file_size",
+        "bits_per_pixel",
+        "jpeg_quality",
+        "has_exif"
+      ]
+    },
+    "ai_detection/colour": {
+      "auc": 0.61469988,
+      "accuracy": 0.5876,
+      "n": 20000,
+      "features": [
+        "mean_r",
+        "mean_g",
+        "mean_b"
+      ]
+    },
+    "deepdetect/file_format": {
+      "auc": 0.6383480999999999,
+      "accuracy": 0.5964,
+      "n": 20000,
+      "features": [
+        "is_png",
+        "width",
+        "height",
+        "file_size",
+        "bits_per_pixel",
+        "jpeg_quality",
+        "has_exif"
+      ]
+    },
+    "deepdetect/colour": {
+      "auc": 0.531239965,
+      "accuracy": 0.5257,
+      "n": 20000,
+      "features": [
+        "mean_r",
+        "mean_g",
+        "mean_b"
+      ]
+    },
+    "labeled_deepfake/file_format": {
+      "auc": 0.7575807358201329,
+      "accuracy": 0.7081469346607019,
+      "n": 15871,
+      "features": [
+        "is_png",
+        "width",
+        "height",
+        "file_size",
+        "bits_per_pixel",
+        "jpeg_quality",
+        "has_exif"
+      ]
+    },
+    "labeled_deepfake/colour": {
+      "auc": 0.7113962612842787,
+      "accuracy": 0.6867872219771911,
+      "n": 15871,
+      "features": [
+        "mean_r",
+        "mean_g",
+        "mean_b"
+      ]
+    },
+    "midjourney_imagenet/file_format": {
+      "auc": 0.9999457412647546,
+      "accuracy": 0.9967989756722151,
+      "n": 1562,
+      "features": [
+        "is_png",
+        "width",
+        "height",
+        "file_size",
+        "bits_per_pixel",
+        "jpeg_quality",
+        "has_exif"
+      ]
+    },
+    "midjourney_imagenet/colour": {
+      "auc": 0.6321117993018709,
+      "accuracy": 0.6075544174135723,
+      "n": 1562,
+      "features": [
+        "mean_r",
+        "mean_g",
+        "mean_b"
+      ]
+    }
+  }
+}

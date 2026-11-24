@@ -1,0 +1,28 @@
+# One web service: FastAPI serves the API and the built React app (same origin, no CORS needed).
+# Training never runs here; the service only loads the committed ONNX model (artifacts/models).
+services:
+  - type: web
+    name: ai-image-detection
+    runtime: python
+    plan: starter
+    region: singapore
+    buildCommand: pip install -r backend/requirements.txt && npm ci --prefix frontend && npm run build --prefix frontend
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: TRUST_PROXY_HEADERS
+        value: "true"
+      # Render sits behind Cloudflare: the rightmost X-Forwarded-For hop is the edge, True-Client-IP is the visitor
+      - key: CLIENT_IP_HEADER
+        value: true-client-ip
+      - key: MAX_CONCURRENT_INFERENCES
+        value: "1"
+      - key: INFERENCE_THREADS
+        value: "1"
+      - key: LOG_LEVEL
+        value: INFO

@@ -1,0 +1,592 @@
+{
+ "available": [
+  "confidence",
+  "confusion",
+  "dataset_report",
+  "external",
+  "history",
+  "latency",
+  "model_comparison",
+  "pr",
+  "robustness",
+  "roc",
+  "summary"
+ ],
+ "metrics": {
+  "summary": {
+   "model": "efficientnet_b0",
+   "created": "2026-11-20T10:30:00Z",
+   "seed": 42,
+   "validation": {
+    "n": 16132,
+    "threshold": 0.5,
+    "accuracy": 0.9521,
+    "precision": 0.9472,
+    "recall": 0.9514,
+    "f1": 0.9493,
+    "specificity": 0.9525,
+    "false_positive_rate": 0.0475,
+    "false_negative_rate": 0.0486,
+    "roc_auc": 0.9874,
+    "pr_auc": 0.9834,
+    "log_loss": 0.1832,
+    "brier": 0.0511,
+    "ece": 0.0123,
+    "confusion_matrix": [
+     [
+      8110,
+      404
+     ],
+     [
+      370,
+      7248
+     ]
+    ]
+   },
+   "test": {
+    "n": 16133,
+    "threshold": 0.5,
+    "accuracy": 0.9508,
+    "precision": 0.9459,
+    "recall": 0.9501,
+    "f1": 0.948,
+    "specificity": 0.9514,
+    "false_positive_rate": 0.0486,
+    "false_negative_rate": 0.0499,
+    "roc_auc": 0.9869,
+    "pr_auc": 0.9829,
+    "log_loss": 0.1832,
+    "brier": 0.0511,
+    "ece": 0.0123,
+    "confusion_matrix": [
+     [
+      8100,
+      414
+     ],
+     [
+      380,
+      7239
+     ]
+    ]
+   },
+   "test_with_band": {
+    "coverage": 0.912,
+    "accuracy_on_decided": 0.987,
+    "false_positive_rate_on_real": 0.0191,
+    "error_rate": 0.0119,
+    "inconclusive": 1420
+   },
+   "temperature": 1.37,
+   "band": {
+    "low": 0.2,
+    "high": 0.8
+   }
+  },
+  "history": {
+   "epochs": [
+    {
+     "epoch": 1,
+     "phase": "head",
+     "train_loss": 0.496,
+     "val_loss": 0.518,
+     "train_accuracy": 0.73,
+     "val_accuracy": 0.718,
+     "lr": 0.001,
+     "seconds": 120.0
+    },
+    {
+     "epoch": 2,
+     "phase": "head",
+     "train_loss": 0.3968,
+     "val_loss": 0.4333,
+     "train_accuracy": 0.76,
+     "val_accuracy": 0.746,
+     "lr": 0.001,
+     "seconds": 120.0
+    },
+    {
+     "epoch": 3,
+     "phase": "finetune",
+     "train_loss": 0.3174,
+     "val_loss": 0.3631,
+     "train_accuracy": 0.79,
+     "val_accuracy": 0.774,
+     "lr": 0.0001,
+     "seconds": 120.0
+    },
+    {
+     "epoch": 4,
+     "phase": "finetune",
+     "train_loss": 0.254,
+     "val_loss": 0.3047,
+     "train_accuracy": 0.82,
+     "val_accuracy": 0.802,
+     "lr": 8.75e-05,
+     "seconds": 120.0
+    },
+    {
+     "epoch": 5,
+     "phase": "finetune",
+     "train_loss": 0.2032,
+     "val_loss": 0.2563,
+     "train_accuracy": 0.85,
+     "val_accuracy": 0.83,
+     "lr": 7.500000000000001e-05,
+     "seconds": 120.0
+    },
+    {
+     "epoch": 6,
+     "phase": "finetune",
+     "train_loss": 0.1625,
+     "val_loss": 0.2162,
+     "train_accuracy": 0.88,
+     "val_accuracy": 0.858,
+     "lr": 6.25e-05,
+     "seconds": 120.0
+    },
+    {
+     "epoch": 7,
+     "phase": "finetune",
+     "train_loss": 0.13,
+     "val_loss": 0.1828,
+     "train_accuracy": 0.91,
+     "val_accuracy": 0.886,
+     "lr": 5e-05,
+     "seconds": 120.0
+    },
+    {
+     "epoch": 8,
+     "phase": "finetune",
+     "train_loss": 0.104,
+     "val_loss": 0.1551,
+     "train_accuracy": 0.94,
+     "val_accuracy": 0.914,
+     "lr": 3.7500000000000003e-05,
+     "seconds": 120.0
+    },
+    {
+     "epoch": 9,
+     "phase": "finetune",
+     "train_loss": 0.0832,
+     "val_loss": 0.1322,
+     "train_accuracy": 0.97,
+     "val_accuracy": 0.942,
+     "lr": 2.5e-05,
+     "seconds": 120.0
+    },
+    {
+     "epoch": 10,
+     "phase": "finetune",
+     "train_loss": 0.0666,
+     "val_loss": 0.1131,
+     "train_accuracy": 0.99,
+     "val_accuracy": 0.97,
+     "lr": 1.25e-05,
+     "seconds": 120.0
+    }
+   ]
+  },
+  "confusion": {
+   "labels": [
+    "real",
+    "ai_generated"
+   ],
+   "matrix": [
+    [
+     8100,
+     414
+    ],
+    [
+     380,
+     7239
+    ]
+   ]
+  },
+  "roc": {
+   "fpr": [
+    0,
+    0.01,
+    0.02,
+    0.05,
+    0.1,
+    0.2,
+    0.4,
+    0.7,
+    1
+   ],
+   "tpr": [
+    0,
+    0.62,
+    0.78,
+    0.9,
+    0.95,
+    0.975,
+    0.99,
+    0.997,
+    1
+   ],
+   "auc": 0.9869
+  },
+  "pr": {
+   "precision": [
+    0.47,
+    0.8,
+    0.9,
+    0.95,
+    0.97,
+    0.985,
+    0.992,
+    0.997,
+    1
+   ],
+   "recall": [
+    1,
+    0.99,
+    0.97,
+    0.94,
+    0.9,
+    0.8,
+    0.6,
+    0.3,
+    0
+   ],
+   "average_precision": 0.9851
+  },
+  "confidence": {
+   "bins": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1.0
+   ],
+   "real": [
+    6100,
+    1100,
+    420,
+    260,
+    190,
+    140,
+    110,
+    80,
+    60,
+    54
+   ],
+   "ai_generated": [
+    70,
+    60,
+    80,
+    90,
+    120,
+    160,
+    260,
+    430,
+    1250,
+    5099
+   ]
+  },
+  "external": {
+   "sets": [
+    {
+     "name": "labeled_deepfake",
+     "protocol": "zero-shot",
+     "n": 18049,
+     "metrics": {
+      "n": 18049,
+      "threshold": 0.5,
+      "accuracy": 0.7412,
+      "precision": 0.8525,
+      "recall": 0.7454,
+      "f1": 0.7954,
+      "specificity": 0.7324,
+      "false_positive_rate": 0.2676,
+      "false_negative_rate": 0.2546,
+      "roc_auc": 0.8123,
+      "pr_auc": 0.8083,
+      "log_loss": 0.1832,
+      "brier": 0.0511,
+      "ece": 0.0123,
+      "confusion_matrix": [
+       [
+        4300,
+        1571
+       ],
+       [
+        3100,
+        9078
+       ]
+      ]
+     }
+    },
+    {
+     "name": "midjourney_imagenet",
+     "protocol": "zero-shot",
+     "n": 1562,
+     "metrics": {
+      "n": 1562,
+      "threshold": 0.5,
+      "accuracy": 0.6811,
+      "precision": 0.713,
+      "recall": 0.661,
+      "f1": 0.686,
+      "specificity": 0.7037,
+      "false_positive_rate": 0.2963,
+      "false_negative_rate": 0.339,
+      "roc_auc": 0.7344,
+      "pr_auc": 0.7304,
+      "log_loss": 0.1832,
+      "brier": 0.0511,
+      "ece": 0.0123,
+      "confusion_matrix": [
+       [
+        520,
+        219
+       ],
+       [
+        279,
+        544
+       ]
+      ]
+     }
+    }
+   ],
+   "notes": [
+    "External sets were excluded from training, validation and threshold selection."
+   ]
+  },
+  "robustness": {
+   "conditions": [
+    {
+     "name": "jpeg_q50",
+     "description": "JPEG recompression at quality 50",
+     "accuracy": 0.9213,
+     "roc_auc": 0.9701,
+     "false_positive_rate": 0.041
+    },
+    {
+     "name": "resize_0.5",
+     "description": "Downscale to half size",
+     "accuracy": 0.8712,
+     "roc_auc": null,
+     "false_positive_rate": 0.083
+    }
+   ]
+  },
+  "dataset_report": {
+   "original_images": 131927,
+   "cleaned_images": 127161,
+   "removed_images": 4766,
+   "removed_by_reason": {
+    "conflicting_label": 1478,
+    "exact_duplicate": 267,
+    "external_leak": 3018,
+    "unsupported_format": 3
+   },
+   "exact_duplicates_removed": 267,
+   "near_duplicate_clusters": 5559,
+   "images_in_near_duplicate_clusters": 13427,
+   "class_distribution": {
+    "real": 63369,
+    "ai_generated": 63792
+   },
+   "by_source": {
+    "deepdetect": {
+     "real": 56759,
+     "ai_generated": 50791,
+     "role": "train_pool",
+     "domain": "faces"
+    },
+    "labeled_deepfake": {
+     "real": 5871,
+     "ai_generated": 12178,
+     "role": "external",
+     "domain": "faces"
+    },
+    "midjourney_imagenet": {
+     "real": 739,
+     "ai_generated": 823,
+     "role": "external",
+     "domain": "general"
+    }
+   },
+   "by_generator": {
+    "DALL-E": 2000,
+    "DeepFaceLab": 1591,
+    "Face2Face": 1000,
+    "FaceShifter": 1000,
+    "FaceSwap": 1600,
+    "Midjourney": 930,
+    "NeuralTextures": 1000,
+    "Stable Diffusion": 2098,
+    "StyleGAN": 959,
+    "midjourney": 823,
+    "unknown_fake": 50791
+   },
+   "formats": {
+    "ai_generated": {
+     "JPEG": 58793,
+     "PNG": 4999
+    },
+    "real": {
+     "JPEG": 63136,
+     "PNG": 233
+    }
+   },
+   "resolution_top": {
+    "256x256": 122242,
+    "1024x1024": 831,
+    "300x300": 687,
+    "525x525": 137,
+    "612x408": 134,
+    "200x200": 125,
+    "570x570": 90,
+    "275x183": 78,
+    "452x451": 65,
+    "250x250": 50
+   },
+   "splits": {
+    "train": {
+     "real": 39731,
+     "ai_generated": 35554
+    },
+    "val": {
+     "real": 8514,
+     "ai_generated": 7618
+    },
+    "test": {
+     "real": 8514,
+     "ai_generated": 7619
+    },
+    "external": {
+     "real": 6610,
+     "ai_generated": 13001
+    }
+   },
+   "leakage_check": {
+    "exact_duplicate_leaks": 0,
+    "near_duplicate_leaks": 0
+   },
+   "shortcut_probes": {
+    "deepdetect/file_format": {
+     "auc": 0.6383480999999999,
+     "accuracy": 0.5964,
+     "n": 20000,
+     "features": [
+      "is_png",
+      "width",
+      "height",
+      "file_size",
+      "bits_per_pixel",
+      "jpeg_quality",
+      "has_exif"
+     ]
+    },
+    "deepdetect/colour": {
+     "auc": 0.531239965,
+     "accuracy": 0.5257,
+     "n": 20000,
+     "features": [
+      "mean_r",
+      "mean_g",
+      "mean_b"
+     ]
+    },
+    "labeled_deepfake/file_format": {
+     "auc": 0.7575807358201329,
+     "accuracy": 0.7081469346607019,
+     "n": 15871,
+     "features": [
+      "is_png",
+      "width",
+      "height",
+      "file_size",
+      "bits_per_pixel",
+      "jpeg_quality",
+      "has_exif"
+     ]
+    },
+    "labeled_deepfake/colour": {
+     "auc": 0.7113962612842787,
+     "accuracy": 0.6867872219771911,
+     "n": 15871,
+     "features": [
+      "mean_r",
+      "mean_g",
+      "mean_b"
+     ]
+    },
+    "midjourney_imagenet/file_format": {
+     "auc": 0.9999457412647546,
+     "accuracy": 0.9967989756722151,
+     "n": 1562,
+     "features": [
+      "is_png",
+      "width",
+      "height",
+      "file_size",
+      "bits_per_pixel",
+      "jpeg_quality",
+      "has_exif"
+     ]
+    },
+    "midjourney_imagenet/colour": {
+     "auc": 0.6321117993018709,
+     "accuracy": 0.6075544174135723,
+     "n": 1562,
+     "features": [
+      "mean_r",
+      "mean_g",
+      "mean_b"
+     ]
+    }
+   }
+  },
+  "latency": {
+   "cpu": {
+    "p50_ms": 38.2,
+    "p95_ms": 51.7,
+    "rss_mb": 212.0
+   },
+   "onnx_size_mb": 15.6,
+   "runs": 200,
+   "machine": "fixture laptop (8-core CPU)"
+  },
+  "model_comparison": {
+   "models": [
+    {
+     "name": "mobilenetv3_large_100",
+     "parameters_millions": 4.2,
+     "onnx_size_mb": 16.1,
+     "validation_auc": 0.9711,
+     "external_auc": 0.7601,
+     "false_positive_rate": 0.061,
+     "latency_ms": 19.4
+    },
+    {
+     "name": "efficientnet_b0",
+     "parameters_millions": 4.0,
+     "onnx_size_mb": 15.6,
+     "validation_auc": 0.9874,
+     "external_auc": 0.8123,
+     "false_positive_rate": 0.0486,
+     "latency_ms": 38.2
+    },
+    {
+     "name": "resnet50",
+     "parameters_millions": 23.5,
+     "onnx_size_mb": 90.1,
+     "validation_auc": 0.9802,
+     "external_auc": 0.7903,
+     "false_positive_rate": 0.052,
+     "latency_ms": 96.5
+    }
+   ]
+  }
+ }
+}
