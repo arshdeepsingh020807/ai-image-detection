@@ -37,7 +37,7 @@ export function ResultView({ result, headingRef }: { result: Prediction; heading
             <div><dt>Dimensions</dt><dd>{image.width} × {image.height} px</dd></div>
             <div><dt>Format</dt><dd>{image.format}, {formatBytes(image.size_bytes)}</dd></div>
             <div><dt>Model</dt><dd>{model.architecture}</dd></div>
-            <div><dt>Version</dt><dd><code>{model.version.split("-").map((part, i) => (i ? <span key={i}>-<wbr />{part}</span> : part))}</code></dd></div>
+            <div><dt>Version</dt><dd><code>{model.version.split(/(?<=[_-])/).map((part, i) => <span key={i}>{part}<wbr /></span>)}</code></dd></div>
             <div><dt>Heatmap</dt><dd>{explanation ? explanation.method : "Not requested"}</dd></div>
           </dl>
         </section>
