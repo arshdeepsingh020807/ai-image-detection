@@ -1,0 +1,92 @@
+{
+  "conditions": [
+    {
+      "name": "original",
+      "description": "Unmodified test image",
+      "accuracy": 0.971,
+      "roc_auc": 0.995101,
+      "false_positive_rate": 0.028,
+      "n": 2000
+    },
+    {
+      "name": "jpeg_q90",
+      "description": "Re-saved as JPEG quality 90",
+      "accuracy": 0.948,
+      "roc_auc": 0.9897675,
+      "false_positive_rate": 0.062,
+      "n": 2000
+    },
+    {
+      "name": "jpeg_q70",
+      "description": "Re-saved as JPEG quality 70",
+      "accuracy": 0.959,
+      "roc_auc": 0.9905665,
+      "false_positive_rate": 0.043,
+      "n": 2000
+    },
+    {
+      "name": "jpeg_q50",
+      "description": "Re-saved as JPEG quality 50",
+      "accuracy": 0.939,
+      "roc_auc": 0.9835435,
+      "false_positive_rate": 0.06,
+      "n": 2000
+    },
+    {
+      "name": "jpeg_q30",
+      "description": "Re-saved as JPEG quality 30 (heavy compression)",
+      "accuracy": 0.903,
+      "roc_auc": 0.96702,
+      "false_positive_rate": 0.054,
+      "n": 2000
+    },
+    {
+      "name": "low_resolution",
+      "description": "Downscaled to 50 % (the model then upsamples it)",
+      "accuracy": 0.951,
+      "roc_auc": 0.987924,
+      "false_positive_rate": 0.055,
+      "n": 2000
+    },
+    {
+      "name": "very_low_resolution",
+      "description": "Downscaled to 25 %",
+      "accuracy": 0.7575,
+      "roc_auc": 0.9066905,
+      "false_positive_rate": 0.065,
+      "n": 2000
+    },
+    {
+      "name": "cropped",
+      "description": "Central 60 % crop",
+      "accuracy": 0.785,
+      "roc_auc": 0.9559529999999999,
+      "false_positive_rate": 0.019,
+      "n": 2000
+    },
+    {
+      "name": "screenshot",
+      "description": "Screenshot-like: 75 % resample, sharpening, PNG",
+      "accuracy": 0.967,
+      "roc_auc": 0.9939500000000001,
+      "false_positive_rate": 0.026,
+      "n": 2000
+    },
+    {
+      "name": "edited",
+      "description": "Brightness/contrast edit then JPEG q90",
+      "accuracy": 0.9415,
+      "roc_auc": 0.9876679999999999,
+      "false_positive_rate": 0.072,
+      "n": 2000
+    },
+    {
+      "name": "blurred",
+      "description": "Gaussian blur radius 1",
+      "accuracy": 0.9505,
+      "roc_auc": 0.987338,
+      "false_positive_rate": 0.025,
+      "n": 2000
+    }
+  ]
+}

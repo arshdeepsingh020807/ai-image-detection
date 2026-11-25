@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import torch
 from PIL import Image
-from torch.utils.data import Dataset, WeightedRandomSampler
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 
 from detector_core.preprocess import prepare, to_rgb
 from ml.preprocessing.augment import AugmentConfig, augment, jpeg_roundtrip
@@ -44,6 +44,22 @@ class ManifestDataset(Dataset):
         else:
             arr = prepare(img)
         return torch.from_numpy(arr), torch.tensor(self.labels[index])
+
+
+def numpy_collate(batch: list):
+    """Stack a batch into NumPy arrays inside the worker.
+
+    Tensors returned by DataLoader workers travel through torch's shared-memory manager, whose connection
+    times out on long macOS runs ("Shared memory manager connection has timed out"); NumPy arrays are
+    pickled through the ordinary worker pipe instead.
+    """
+    if isinstance(batch[0], tuple):
+        return tuple(numpy_collate(list(field)) for field in zip(*batch, strict=True))
+    return np.stack([item.numpy() if isinstance(item, torch.Tensor) else np.asarray(item) for item in batch])
+
+
+def make_loader(dataset: Dataset, **kwargs) -> DataLoader:
+    return DataLoader(dataset, collate_fn=numpy_collate, **kwargs)
 
 
 def balanced_weights(rows: pd.DataFrame, keys: tuple[str, ...] = ("domain", "label")) -> np.ndarray:

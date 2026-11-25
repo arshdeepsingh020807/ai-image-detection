@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 from collections.abc import Callable
+from functools import partial
 
 from PIL import Image, ImageEnhance, ImageFilter
 
@@ -35,18 +36,27 @@ def edited(img: Image.Image) -> Image.Image:
     return jpeg_roundtrip(img, 90)
 
 
+def identity(img: Image.Image) -> Image.Image:
+    return img
+
+
+def blurred(img: Image.Image) -> Image.Image:
+    return img.filter(ImageFilter.GaussianBlur(1))
+
+
+# Named functions and partials only: DataLoader workers are spawned processes, so transforms must pickle.
 CONDITIONS: dict[str, tuple[str, Transform]] = {
-    "original": ("Unmodified test image", lambda img: img),
-    "jpeg_q90": ("Re-saved as JPEG quality 90", lambda img: jpeg_roundtrip(img, 90)),
-    "jpeg_q70": ("Re-saved as JPEG quality 70", lambda img: jpeg_roundtrip(img, 70)),
-    "jpeg_q50": ("Re-saved as JPEG quality 50", lambda img: jpeg_roundtrip(img, 50)),
-    "jpeg_q30": ("Re-saved as JPEG quality 30 (heavy compression)", lambda img: jpeg_roundtrip(img, 30)),
-    "low_resolution": ("Downscaled to 50 % (the model then upsamples it)", lambda img: downscale(img, 0.5)),
-    "very_low_resolution": ("Downscaled to 25 %", lambda img: downscale(img, 0.25)),
-    "cropped": ("Central 60 % crop", lambda img: center_crop_fraction(img, 0.6)),
+    "original": ("Unmodified test image", identity),
+    "jpeg_q90": ("Re-saved as JPEG quality 90", partial(jpeg_roundtrip, quality=90)),
+    "jpeg_q70": ("Re-saved as JPEG quality 70", partial(jpeg_roundtrip, quality=70)),
+    "jpeg_q50": ("Re-saved as JPEG quality 50", partial(jpeg_roundtrip, quality=50)),
+    "jpeg_q30": ("Re-saved as JPEG quality 30 (heavy compression)", partial(jpeg_roundtrip, quality=30)),
+    "low_resolution": ("Downscaled to 50 % (the model then upsamples it)", partial(downscale, factor=0.5)),
+    "very_low_resolution": ("Downscaled to 25 %", partial(downscale, factor=0.25)),
+    "cropped": ("Central 60 % crop", partial(center_crop_fraction, fraction=0.6)),
     "screenshot": ("Screenshot-like: 75 % resample, sharpening, PNG", screenshot_like),
     "edited": ("Brightness/contrast edit then JPEG q90", edited),
-    "blurred": ("Gaussian blur radius 1", lambda img: img.filter(ImageFilter.GaussianBlur(1))),
+    "blurred": ("Gaussian blur radius 1", blurred),
 }
 
 

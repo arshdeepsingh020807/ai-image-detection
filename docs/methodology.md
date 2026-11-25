@@ -53,11 +53,17 @@ damage pretrained weights with large early gradients. Phase 2 unfreezes the back
 rate to adapt the features to generation artefacts. Frozen BatchNorm layers stay in evaluation mode so their
 statistics are not overwritten by small batches.
 
-**Architecture selection.** Candidates (MobileNetV3-Large, EfficientNet-B0, ResNet50) are trained with the same
-short budget and compared on validation AUC, AUC on unseen generators, false-positive rate, ONNX size and CPU
-latency. The deployment target is a 0.5-CPU, 512 MB Render instance, so size and CPU latency matter as much as
-accuracy. Training speed on the available Apple-silicon GPU was also measured, because it decides how much
-fine-tuning is affordable.
+**Architecture selection.** Two compact candidates, MobileNetV3-Large and EfficientNet-B0, were trained with the
+same short budget (20,000 images, one head epoch and two fine-tuning epochs) and compared on validation AUC, AUC on
+unseen generators, false-positive rate, ONNX size and CPU latency. The deployment target is a 0.5-CPU, 512 MB Render
+instance, so size and CPU latency matter as much as accuracy. Larger backbones such as ResNet50 (about 90 MB as
+ONNX) were left out because they do not suit that instance. Training speed on the Apple-silicon GPU also decided the
+choice: MobileNetV3 trains about 4.5 times faster there, which buys more fine-tuning on the full dataset.
+
+**Final training run.** The selected MobileNetV3-Large was trained on all 108,842 training images. The run was
+stopped by the host after the third epoch because the laptop ran short of memory; validation accuracy had risen from
+75.2% (head only) to 96.2% and 97.1% in the two fine-tuning epochs, and the epoch-3 checkpoint, which had the lowest
+validation loss, is the deployed model.
 
 **Head design and explainability.** The head is global average pooling → dropout → one linear output. For this
 head Grad-CAM reduces exactly to Class Activation Mapping, `ReLU(Σ_c w_c · A_c)`, where `A_c` is the last feature

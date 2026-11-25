@@ -103,6 +103,25 @@ def test_balanced_sampler_draws_groups_equally_and_is_seeded():
     assert all(abs(v - 1 / 3) < 0.03 for v in shares)
 
 
+def test_numpy_collate_stacks_tuples_and_plain_items():
+    batch = [(torch.full((3, 2, 2), float(i)), torch.tensor(float(i % 2))) for i in range(4)]
+    x, y = D.numpy_collate(batch)
+    assert isinstance(x, np.ndarray) and x.shape == (4, 3, 2, 2) and x.dtype == np.float32
+    assert y.tolist() == [0.0, 1.0, 0.0, 1.0] and x[2].max() == 2.0
+    single = D.numpy_collate([torch.ones(2), torch.zeros(2)])
+    assert single.shape == (2, 2) and single.sum() == 2
+
+
+def test_multiworker_loader_returns_numpy_batches_equal_to_items(tmp_path):
+    rows = make_images(tmp_path, 10)
+    dataset = D.ManifestDataset(rows, train=False)
+    batches = list(D.make_loader(dataset, batch_size=4, num_workers=2))
+    xs = np.concatenate([x for x, _ in batches])
+    assert all(isinstance(x, np.ndarray) for x, _ in batches) and xs.shape == (10, 3, 224, 224)
+    assert np.array_equal(xs[7], dataset[7][0].numpy())
+    assert np.concatenate([y for _, y in batches]).tolist() == rows.label.astype(float).tolist()
+
+
 # ---------- training helpers ----------
 
 
@@ -179,10 +198,21 @@ def test_training_learns_saves_best_checkpoint_and_history(tmp_path):
 
     model = Detector(ARCH, pretrained=False)
     model.load_state_dict(torch.load(result["checkpoint"]))
-    loader = torch.utils.data.DataLoader(D.ManifestDataset(rows[rows.split == "val"], train=False), batch_size=8)
+    loader = D.make_loader(D.ManifestDataset(rows[rows.split == "val"], train=False), batch_size=8)
     logits, labels = T.predict_logits(model, loader, torch.device("cpu"))
     loss, _ = T._loss_and_accuracy(logits, labels)
     assert loss == pytest.approx(result["best"]["val_loss"], abs=1e-4)  # checkpoint really is the best epoch
+
+
+def test_progress_file_tracks_the_last_epoch(tmp_path, monkeypatch):
+    monkeypatch.setattr(T, "PROGRESS_EVERY", 1)
+    rows = make_images(tmp_path, 24)
+    T.train(cfg(tmp_path, epochs_finetune=1), rows, log=lambda *_: None)
+    progress = json.loads((tmp_path / "run/progress.json").read_text())
+    assert progress["state"] == "validating" and progress["phase"] == "finetune" and progress["epoch"] == 2
+    assert progress["total_epochs"] == 2 and progress["batch"] == progress["batches"] == 16 // 8
+    assert progress["images_per_second"] > 0 and 0 <= progress["running_accuracy"] <= 1
+    assert not (tmp_path / "run/progress.tmp").exists()
 
 
 def test_head_phase_leaves_backbone_untouched(tmp_path):

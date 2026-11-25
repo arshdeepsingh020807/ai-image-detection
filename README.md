@@ -112,7 +112,9 @@ with resume, stall detection and an MD5 check. Credentials are read from `~/.kag
 - **Transfer learning:** ImageNet-pretrained backbone; phase 1 trains only the head (global average pool →
   dropout → one linear logit) on a frozen backbone; phase 2 unfreezes the backbone at a 10× lower learning rate.
   AdamW, cosine schedule with warm-up, class-balanced sampling, early stopping on validation loss, best
-  checkpoint kept.
+  checkpoint kept. The final run of the selected MobileNetV3-Large completed three epochs on all 108,842 training
+  images before the host stopped it for lack of memory; its best checkpoint (epoch 3, lowest validation loss) is
+  the deployed model, and `python -m ml.scripts.run_experiments evaluate` produced every result below from it.
 - **Calibration and abstention:** a temperature fitted on validation calibrates the probability; an
   inconclusive band is chosen on validation so at most 2% of real and 2% of AI validation images fall on the
   wrong side of a verdict.
@@ -123,32 +125,87 @@ with resume, stall detection and an MD5 check. Credentials are read from `~/.kag
 
 ### Model selection
 
+Two compact candidates were trained under the same budget; the deployed model is chosen on generalisation to unseen
+generators, false-positive rate, size and CPU latency as well as validation AUC.
+
 <!-- generated:comparison -->
-_Not available yet: this section is generated after the evaluation script has run._
+| Model | Parameters | ONNX size | Validation AUC | Unseen-generator AUC | CPU latency |
+|---|---|---|---|---|---|
+| efficientnet_b0 | 4.0 M | 15.8 MB | 0.985 | 0.966 | 24 ms |
+| mobilenetv3_large_100 | 4.2 M | 11.6 MB | 0.981 | 0.974 | 11 ms |
 <!-- /generated:comparison -->
 
 ### Held-out test split
 
 <!-- generated:results -->
-_Not available yet: this section is generated after the evaluation script has run._
+Model `mobilenetv3_large_100`, held-out test split (n = 23,325), calibrated with temperature 1.246 fitted on validation.
+
+| Metric | Value |
+|---|---|
+| accuracy | 96.9% |
+| precision | 96.7% |
+| recall | 96.9% |
+| f1 | 96.8% |
+| specificity | 96.9% |
+| false positive rate | 3.1% |
+| false negative rate | 3.1% |
+| ROC-AUC | 0.995 |
+| PR-AUC | 0.995 |
+| log loss | 0.087 |
+| ECE (calibration error) | 0.005 |
+
+|  | Predicted real | Predicted AI |
+|---|---|---|
+| Actually real | 11,736 | 374 |
+| Actually AI | 348 | 10,867 |
+
+With the inconclusive band (33.3% to 64.0% probability of AI), the model gives a verdict on 97.7% of test images, 97.8% of which are correct; 543 are inconclusive.
 <!-- /generated:results -->
 
 ### External sources (never used in training)
 
 <!-- generated:external -->
-_Not available yet: this section is generated after the evaluation script has run._
+| Set | Protocol | n | Accuracy | ROC-AUC |
+|---|---|---|---|---|
+| labeled_deepfake | as_is | 11,858 | 89.9% | 0.977 |
+| labeled_deepfake/DALL-E | as_is | 2,000 | 99.1% | n/a |
+| labeled_deepfake/Midjourney | as_is | 930 | 99.0% | n/a |
+| labeled_deepfake/Stable Diffusion | as_is | 2,098 | 84.7% | n/a |
+| labeled_deepfake/StyleGAN | as_is | 959 | 30.0% | n/a |
+| labeled_deepfake/real | as_is | 5,871 | 96.9% | n/a |
+| labeled_deepfake/face_swap (out of scope) | as_is | 6,191 | 8.2% | n/a |
+| labeled_deepfake | matched: AI images resized to 256px and JPEG q95 | 11,858 | 91.6% | 0.982 |
+| midjourney_imagenet | as_is | 1,562 | 76.4% | 0.864 |
+| midjourney_imagenet/midjourney | as_is | 823 | 80.0% | n/a |
+| midjourney_imagenet/real | as_is | 739 | 72.5% | n/a |
+| midjourney_imagenet | matched: AI images resized to 220px and JPEG q75 | 1,562 | 67.3% | 0.753 |
+
+- labeled_deepfake: real and AI images differ in file format or resolution; the matched protocol removes that difference and is the fairer number.
+- midjourney_imagenet: real and AI images differ in file format or resolution; the matched protocol removes that difference and is the fairer number.
 <!-- /generated:external -->
 
 ### Robustness
 
 <!-- generated:robustness -->
-_Not available yet: this section is generated after the evaluation script has run._
+| Condition | Accuracy | ROC-AUC | False-positive rate |
+|---|---|---|---|
+| Unmodified test image | 97.1% | 0.995 | 2.8% |
+| Re-saved as JPEG quality 90 | 94.8% | 0.990 | 6.2% |
+| Re-saved as JPEG quality 70 | 95.9% | 0.991 | 4.3% |
+| Re-saved as JPEG quality 50 | 93.9% | 0.984 | 6.0% |
+| Re-saved as JPEG quality 30 (heavy compression) | 90.3% | 0.967 | 5.4% |
+| Downscaled to 50 % (the model then upsamples it) | 95.1% | 0.988 | 5.5% |
+| Downscaled to 25 % | 75.8% | 0.907 | 6.5% |
+| Central 60 % crop | 78.5% | 0.956 | 1.9% |
+| Screenshot-like: 75 % resample, sharpening, PNG | 96.7% | 0.994 | 2.6% |
+| Brightness/contrast edit then JPEG q90 | 94.2% | 0.988 | 7.2% |
+| Gaussian blur radius 1 | 95.0% | 0.987 | 2.5% |
 <!-- /generated:robustness -->
 
 ### Size and speed
 
 <!-- generated:latency -->
-_Not available yet: this section is generated after the evaluation script has run._
+ONNX model 11.6 MB; single-image CPU inference p50 11.4 ms, p95 12.3 ms with 1 thread (Darwin arm64 (arm), 50 runs).
 <!-- /generated:latency -->
 
 Figures (training curves, confusion matrix, ROC/PR curves, confidence distribution, class distribution,

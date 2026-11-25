@@ -93,3 +93,59 @@ def test_final_produces_model_card_metrics_latency_and_plots(tmp_path, manifest)
         assert (tmp_path / "m" / f"{name}.json").exists(), name
     assert (tmp_path / "plots/training_loss.png").exists() and (tmp_path / "plots/roc_curve.png").exists()
     assert json.loads((tmp_path / "m/latency.json").read_text())["onnx_size_mb"] > 0.5
+
+
+def test_compare_reuses_a_finished_row_only_for_the_same_budget(tmp_path, manifest, monkeypatch):
+    base = cfg(tmp_path, max_val=10)
+    first = rx.compare(manifest, [ARCH], base, metrics_dir=tmp_path / "m")["models"][0]
+    calls = []
+    monkeypatch.setattr(
+        rx, "train", lambda *a, **k: calls.append(1) or (_ for _ in ()).throw(AssertionError("retrained"))
+    )
+    again = rx.compare(manifest, [ARCH], base, metrics_dir=tmp_path / "m2")["models"][0]
+    assert again == first and calls == []  # same budget: cached row, no training
+    with pytest.raises(AssertionError, match="retrained"):
+        rx.compare(manifest, [ARCH], cfg(tmp_path, max_val=10, epochs_finetune=2), metrics_dir=tmp_path / "m3")
+
+
+def test_assemble_comparison_uses_finished_rows_and_rejects_mixed_budgets(tmp_path):
+    budget = {"max_train": 10, "max_val": 5, "epochs_head": 1, "epochs_finetune": 2, "batch_size": 8, "seed": 1}
+    for name in ("a", "b"):
+        (tmp_path / name).mkdir()
+        (tmp_path / name / "comparison_row.json").write_text(json.dumps({"budget": budget, "row": {"name": name}}))
+    (tmp_path / "c").mkdir()  # a run that never finished is left out
+    out = rx.assemble_comparison(tmp_path, metrics_dir=tmp_path / "m")
+    assert [m["name"] for m in out["models"]] == ["a", "b"] and out["budget"] == budget
+    assert json.loads((tmp_path / "m/model_comparison.json").read_text()) == out
+    (tmp_path / "b/comparison_row.json").write_text(json.dumps({"budget": {**budget, "seed": 2}, "row": {"name": "b"}}))
+    with pytest.raises(ValueError, match="different budgets"):
+        rx.assemble_comparison(tmp_path, metrics_dir=tmp_path / "m")
+
+
+def test_history_from_log_keeps_epoch_records_only(tmp_path):
+    log = tmp_path / "train.log"
+    log.write_text(
+        'Warning: x\n{"epoch": 1, "val_loss": 0.5}\n{"name": "row"}\nearly stopping\n{"epoch": 2, "val_loss": 0.3}\n'
+    )
+    assert rx.history_from_log(log) == {"epochs": [{"epoch": 1, "val_loss": 0.5}, {"epoch": 2, "val_loss": 0.3}]}
+    log.write_text("nothing")
+    with pytest.raises(ValueError, match="no epoch records"):
+        rx.history_from_log(log)
+
+
+def test_publish_evaluates_an_existing_checkpoint_without_training(tmp_path, manifest, monkeypatch):
+    first = rx.final(
+        manifest, cfg(tmp_path), metrics_dir=tmp_path / "m", model_dir=tmp_path / "model", plots_dir=tmp_path / "plots"
+    )
+    monkeypatch.setattr(rx, "train", lambda *a, **k: (_ for _ in ()).throw(AssertionError("trained")))
+    again = rx.publish(
+        manifest,
+        cfg(tmp_path),
+        tmp_path / "ckpt/best.pt",
+        tmp_path / "ckpt/history.json",
+        metrics_dir=tmp_path / "m2",
+        model_dir=tmp_path / "model2",
+        plots_dir=tmp_path / "plots2",
+    )
+    assert again["card"]["test_metrics"] == first["card"]["test_metrics"]  # same checkpoint, same numbers
+    assert again["card"]["training"]["epochs_completed"] == 2 and again["card"]["training"]["train_images"] == 24

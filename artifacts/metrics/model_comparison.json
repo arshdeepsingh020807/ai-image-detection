@@ -1,0 +1,36 @@
+{
+  "models": [
+    {
+      "name": "efficientnet_b0",
+      "parameters_millions": 4.01,
+      "onnx_size_mb": 15.789,
+      "validation_auc": 0.985133433496457,
+      "external_auc": 0.9664815721927229,
+      "false_positive_rate": 0.07558979297063072,
+      "validation_accuracy": 0.9345163709072731,
+      "latency_ms": 24.0,
+      "train_images": 20000,
+      "epochs": 3
+    },
+    {
+      "name": "mobilenetv3_large_100",
+      "parameters_millions": 4.2,
+      "onnx_size_mb": 11.644,
+      "validation_auc": 0.9805092303888645,
+      "external_auc": 0.9737683118783105,
+      "false_positive_rate": 0.06740491092922485,
+      "validation_accuracy": 0.9297675581104724,
+      "latency_ms": 11.3,
+      "train_images": 20000,
+      "epochs": 3
+    }
+  ],
+  "budget": {
+    "max_train": 20000,
+    "max_val": 4000,
+    "epochs_head": 1,
+    "epochs_finetune": 2,
+    "batch_size": 32,
+    "seed": 42
+  }
+}

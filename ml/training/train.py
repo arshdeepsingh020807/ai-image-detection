@@ -15,7 +15,7 @@ import yaml
 from torch import nn
 from torch.utils.data import DataLoader
 
-from ml.training.data import ManifestDataset, balanced_sampler
+from ml.training.data import ManifestDataset, balanced_sampler, make_loader
 from ml.training.model import Detector
 
 
@@ -80,14 +80,48 @@ def predict_logits(model: nn.Module, loader: DataLoader, device: torch.device) -
     model.eval()
     logits, labels = [], []
     for x, y in loader:
-        logits.append(model(x.to(device)).squeeze(1).float().cpu())
-        labels.append(y)
+        logits.append(model(torch.from_numpy(x).to(device)).squeeze(1).float().cpu())
+        labels.append(torch.from_numpy(y))
     return torch.cat(logits).numpy(), torch.cat(labels).numpy()
 
 
 def _loss_and_accuracy(logits: np.ndarray, labels: np.ndarray) -> tuple[float, float]:
     loss = nn.functional.binary_cross_entropy_with_logits(torch.from_numpy(logits), torch.from_numpy(labels)).item()
     return float(loss), float(((logits >= 0) == (labels >= 0.5)).mean())
+
+
+PROGRESS_EVERY = 25
+
+
+def write_progress(path: Path, **fields) -> None:
+    """Live status for dashboards; written atomically so a reader never sees a half-written file."""
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps({**fields, "updated": time.time()}))
+    tmp.replace(path)
+
+
+def progress_fields(
+    state: str,
+    phase: str,
+    epoch: int,
+    total_epochs: int,
+    batches: int,
+    losses: list[float],
+    correct: int,
+    seen: int,
+    started: float,
+) -> dict:
+    return {
+        "state": state,
+        "phase": phase,
+        "epoch": epoch,
+        "total_epochs": total_epochs,
+        "batch": len(losses),
+        "batches": batches,
+        "images_per_second": seen / max(1e-9, time.time() - started),
+        "running_loss": float(np.mean(losses[-50:])) if losses else None,
+        "running_accuracy": correct / seen if seen else None,
+    }
 
 
 def train(cfg: TrainConfig, manifest: pd.DataFrame, log=print) -> dict:
@@ -105,14 +139,14 @@ def train(cfg: TrainConfig, manifest: pd.DataFrame, log=print) -> dict:
         "num_workers": cfg.num_workers,
         "persistent_workers": cfg.num_workers > 0,
     }
-    train_loader = DataLoader(train_set, sampler=balanced_sampler(train_rows, cfg.seed), drop_last=True, **loader_args)
-    val_loader = DataLoader(ManifestDataset(val_rows, train=False), shuffle=False, **loader_args)
+    train_loader = make_loader(train_set, sampler=balanced_sampler(train_rows, cfg.seed), drop_last=True, **loader_args)
+    val_loader = make_loader(ManifestDataset(val_rows, train=False), shuffle=False, **loader_args)
 
     model = Detector(cfg.arch, pretrained=cfg.pretrained).to(device)
     criterion = nn.BCEWithLogitsLoss()  # classes are balanced by the sampler, so no pos_weight
     history: list[dict] = []
     best = {"val_loss": float("inf"), "epoch": 0}
-    epoch = 0
+    epoch, total_epochs = 0, cfg.epochs_head + cfg.epochs_finetune
     for phase, epochs, lr, trainable in (
         ("head", cfg.epochs_head, cfg.lr_head, False),
         ("finetune", cfg.epochs_finetune, cfg.lr_finetune, cfg.unfreeze),
@@ -128,10 +162,12 @@ def train(cfg: TrainConfig, manifest: pd.DataFrame, log=print) -> dict:
             train_set.set_epoch(epoch)
             model.train()
             started, losses, correct, seen = time.time(), [], 0, 0
+            batches = len(train_loader)
+
             for x, y in train_loader:
                 for group in optimizer.param_groups:
                     group["lr"] = cosine_lr(step, total, lr, warmup=min(100, total // 10))
-                x, y = x.to(device), y.to(device)
+                x, y = torch.from_numpy(x).to(device), torch.from_numpy(y).to(device)
                 logits = model(x).squeeze(1)
                 loss = criterion(logits, y)
                 optimizer.zero_grad(set_to_none=True)
@@ -141,6 +177,17 @@ def train(cfg: TrainConfig, manifest: pd.DataFrame, log=print) -> dict:
                 losses.append(loss.item())
                 correct += int(((logits.detach() >= 0) == (y >= 0.5)).sum())
                 seen += len(y)
+                if step % PROGRESS_EVERY == 0:
+                    write_progress(
+                        out / "progress.json",
+                        **progress_fields(
+                            "training", phase, epoch, total_epochs, batches, losses, correct, seen, started
+                        ),
+                    )
+            write_progress(
+                out / "progress.json",
+                **progress_fields("validating", phase, epoch, total_epochs, batches, losses, correct, seen, started),
+            )
             val_loss, val_acc = _loss_and_accuracy(*predict_logits(model, val_loader, device))
             record = {
                 "epoch": epoch,

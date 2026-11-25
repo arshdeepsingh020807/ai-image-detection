@@ -1,0 +1,11 @@
+{
+  "cpu": {
+    "p50_ms": 11.355999624356627,
+    "p95_ms": 12.250300333835185,
+    "rss_mb": 819.1,
+    "threads": 1
+  },
+  "onnx_size_mb": 11.644,
+  "runs": 50,
+  "machine": "Darwin arm64 (arm)"
+}

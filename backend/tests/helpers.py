@@ -63,7 +63,9 @@ class Reference:
     """Independent oracle: its own onnxruntime session, never the service's."""
 
     def __init__(self) -> None:
-        self.session = ort.InferenceSession(str(MODEL_DIR / "detector.onnx"), providers=["CPUExecutionProvider"])
+        options = ort.SessionOptions()
+        options.intra_op_num_threads = 1  # the service's default; other counts change float summation order
+        self.session = ort.InferenceSession(str(MODEL_DIR / "detector.onnx"), options, providers=["CPUExecutionProvider"])
 
     def outputs(self, data: bytes) -> tuple[float, np.ndarray]:
         tensor = prepare(decode_image(data))[None]

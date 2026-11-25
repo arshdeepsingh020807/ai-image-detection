@@ -16,7 +16,8 @@ def loop_cam(features: np.ndarray, weights: np.ndarray) -> np.ndarray:
     for i in range(rows):
         for j in range(cols):
             cam[i, j] = max(0.0, sum(float(weights[c]) * float(features[c, i, j]) for c in range(channels)))
-    return (cam - cam.min()) / (cam.max() - cam.min())
+    spread = cam.max() - cam.min()
+    return np.zeros_like(cam) if spread == 0 else (cam - cam.min()) / spread
 
 
 def bilinear_reference(grid: np.ndarray, size: int) -> np.ndarray:
@@ -133,8 +134,10 @@ def test_render_heatmap_all_zero_cam_is_fully_transparent():
     assert np.asarray(image)[..., 3].max() == 0
 
 
-def test_render_heatmap_on_real_model_features(reference: Reference):
-    _, features = reference.outputs(encode(noise_image(300, 300), "PNG"))
+@pytest.mark.parametrize("make", [lambda: Image.effect_mandelbrot((300, 300), (-2, -1.5, 1, 1.5), 100).convert("RGB"),
+                                  lambda: noise_image(300, 300)])
+def test_render_heatmap_on_real_model_features(reference: Reference, make):
+    _, features = reference.outputs(encode(make(), "PNG"))
     weights = np.asarray(CARD["cam_weights"], dtype=np.float32)
     alpha = np.asarray(decode_png(render_heatmap(features, weights)))[..., 3].astype(float)
     expected = np.clip(bilinear_reference(loop_cam(features, weights), 224), 0, 1) * MAX_ALPHA

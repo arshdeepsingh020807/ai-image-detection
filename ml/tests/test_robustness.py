@@ -18,6 +18,15 @@ def test_every_condition_returns_rgb_is_deterministic_and_described(name):
     assert description and a.mode == "RGB" and np.array_equal(np.asarray(a), np.asarray(b))
 
 
+@pytest.mark.parametrize("name", list(rb.CONDITIONS))
+def test_every_condition_survives_pickling_for_loader_workers(name):
+    import pickle
+
+    fn = rb.CONDITIONS[name][1]
+    img = photo()
+    assert np.array_equal(np.asarray(pickle.loads(pickle.dumps(fn))(img)), np.asarray(fn(img)))
+
+
 def test_original_is_identity_and_others_change_the_image():
     img = photo()
     assert np.array_equal(np.asarray(rb.CONDITIONS["original"][1](img)), np.asarray(img))

@@ -1,0 +1,380 @@
+{
+  "sets": [
+    {
+      "name": "labeled_deepfake",
+      "protocol": "as_is",
+      "n": 11858,
+      "metrics": {
+        "n": 11858,
+        "threshold": 0.5,
+        "accuracy": 0.8986338336987688,
+        "precision": 0.9642926450611294,
+        "recall": 0.8299649240020044,
+        "f1": 0.8921005385996409,
+        "specificity": 0.9686595128598194,
+        "false_positive_rate": 0.03134048714018055,
+        "false_negative_rate": 0.17003507599799567,
+        "roc_auc": 0.9766867843479757,
+        "pr_auc": 0.9784701078317967,
+        "log_loss": 0.23352356357927997,
+        "brier": 0.07314480901507218,
+        "ece": 0.03469698239364839,
+        "confusion_matrix": [
+          [
+            5687,
+            184
+          ],
+          [
+            1018,
+            4969
+          ]
+        ]
+      }
+    },
+    {
+      "name": "labeled_deepfake/DALL-E",
+      "protocol": "as_is",
+      "n": 2000,
+      "metrics": {
+        "n": 2000,
+        "threshold": 0.5,
+        "accuracy": 0.991,
+        "precision": 1.0,
+        "recall": 0.991,
+        "f1": 0.9954796584630838,
+        "specificity": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.009,
+        "roc_auc": null,
+        "pr_auc": null,
+        "log_loss": 0.033041597604760185,
+        "brier": 0.0072788627612708195,
+        "ece": 0.01572041405737401,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            18,
+            1982
+          ]
+        ]
+      }
+    },
+    {
+      "name": "labeled_deepfake/Midjourney",
+      "protocol": "as_is",
+      "n": 930,
+      "metrics": {
+        "n": 930,
+        "threshold": 0.5,
+        "accuracy": 0.9903225806451613,
+        "precision": 1.0,
+        "recall": 0.9903225806451613,
+        "f1": 0.9951377633711508,
+        "specificity": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.00967741935483871,
+        "roc_auc": null,
+        "pr_auc": null,
+        "log_loss": 0.03089312575057631,
+        "brier": 0.007763186899834477,
+        "ece": 0.009101511740316025,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            9,
+            921
+          ]
+        ]
+      }
+    },
+    {
+      "name": "labeled_deepfake/Stable Diffusion",
+      "protocol": "as_is",
+      "n": 2098,
+      "metrics": {
+        "n": 2098,
+        "threshold": 0.5,
+        "accuracy": 0.8474737845567207,
+        "precision": 1.0,
+        "recall": 0.8474737845567207,
+        "f1": 0.9174406604747162,
+        "specificity": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.15252621544327932,
+        "roc_auc": null,
+        "pr_auc": null,
+        "log_loss": 0.38451479200343525,
+        "brier": 0.11353899784515087,
+        "ece": 0.04903119085721537,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            320,
+            1778
+          ]
+        ]
+      }
+    },
+    {
+      "name": "labeled_deepfake/StyleGAN",
+      "protocol": "as_is",
+      "n": 959,
+      "metrics": {
+        "n": 959,
+        "threshold": 0.5,
+        "accuracy": 0.30031282586027114,
+        "precision": 1.0,
+        "recall": 0.30031282586027114,
+        "f1": 0.4619085805934242,
+        "specificity": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.6996871741397289,
+        "roc_auc": null,
+        "pr_auc": null,
+        "log_loss": 1.3940363245812502,
+        "brier": 0.47727141439772913,
+        "ece": 0.48332516290441674,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            671,
+            288
+          ]
+        ]
+      }
+    },
+    {
+      "name": "labeled_deepfake/real",
+      "protocol": "as_is",
+      "n": 5871,
+      "metrics": {
+        "n": 5871,
+        "threshold": 0.5,
+        "accuracy": 0.9686595128598194,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "specificity": 0.9686595128598194,
+        "false_positive_rate": 0.03134048714018055,
+        "false_negative_rate": 0.0,
+        "roc_auc": null,
+        "pr_auc": null,
+        "log_loss": 0.09039614135052285,
+        "brier": 0.025492344076782397,
+        "ece": 0.018002415366969383,
+        "confusion_matrix": [
+          [
+            5687,
+            184
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "name": "labeled_deepfake/face_swap (out of scope)",
+      "protocol": "as_is",
+      "n": 6191,
+      "metrics": {
+        "n": 6191,
+        "threshold": 0.5,
+        "accuracy": 0.081893070586335,
+        "precision": 1.0,
+        "recall": 0.081893070586335,
+        "f1": 0.15138847417139445,
+        "specificity": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.918106929413665,
+        "roc_auc": null,
+        "pr_auc": null,
+        "log_loss": 4.179046513703212,
+        "brier": 0.8164701005347321,
+        "ece": 0.8338034250059011,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            5684,
+            507
+          ]
+        ]
+      }
+    },
+    {
+      "name": "labeled_deepfake",
+      "protocol": "matched: AI images resized to 256px and JPEG q95",
+      "n": 11858,
+      "metrics": {
+        "n": 11858,
+        "threshold": 0.5,
+        "accuracy": 0.9155000843312532,
+        "precision": 0.9656267513543807,
+        "recall": 0.8633706363788208,
+        "f1": 0.9116402116402117,
+        "specificity": 0.9686595128598194,
+        "false_positive_rate": 0.03134048714018055,
+        "false_negative_rate": 0.13662936362117922,
+        "roc_auc": 0.9821650708198543,
+        "pr_auc": 0.9832807950699833,
+        "log_loss": 0.19603525738931765,
+        "brier": 0.060813938559406526,
+        "ece": 0.017644357418543987,
+        "confusion_matrix": [
+          [
+            5687,
+            184
+          ],
+          [
+            818,
+            5169
+          ]
+        ]
+      }
+    },
+    {
+      "name": "midjourney_imagenet",
+      "protocol": "as_is",
+      "n": 1562,
+      "metrics": {
+        "n": 1562,
+        "threshold": 0.5,
+        "accuracy": 0.764404609475032,
+        "precision": 0.7642276422764228,
+        "recall": 0.7995139732685298,
+        "f1": 0.7814726840855107,
+        "specificity": 0.7253044654939107,
+        "false_positive_rate": 0.2746955345060893,
+        "false_negative_rate": 0.20048602673147023,
+        "roc_auc": 0.8643465850702979,
+        "pr_auc": 0.8834638620332406,
+        "log_loss": 0.5608886659915681,
+        "brier": 0.16582357072105264,
+        "ece": 0.11701518184823054,
+        "confusion_matrix": [
+          [
+            536,
+            203
+          ],
+          [
+            165,
+            658
+          ]
+        ]
+      }
+    },
+    {
+      "name": "midjourney_imagenet/midjourney",
+      "protocol": "as_is",
+      "n": 823,
+      "metrics": {
+        "n": 823,
+        "threshold": 0.5,
+        "accuracy": 0.7995139732685298,
+        "precision": 1.0,
+        "recall": 0.7995139732685298,
+        "f1": 0.888588791357191,
+        "specificity": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.20048602673147023,
+        "roc_auc": null,
+        "pr_auc": null,
+        "log_loss": 0.48032811868461356,
+        "brier": 0.1435200174963536,
+        "ece": 0.10418480673762019,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            165,
+            658
+          ]
+        ]
+      }
+    },
+    {
+      "name": "midjourney_imagenet/real",
+      "protocol": "as_is",
+      "n": 739,
+      "metrics": {
+        "n": 739,
+        "threshold": 0.5,
+        "accuracy": 0.7253044654939107,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "specificity": 0.7253044654939107,
+        "false_positive_rate": 0.2746955345060893,
+        "false_negative_rate": 0.0,
+        "roc_auc": null,
+        "pr_auc": null,
+        "log_loss": 0.6506062985133859,
+        "brier": 0.19066230455586636,
+        "ece": 0.1330399291567504,
+        "confusion_matrix": [
+          [
+            536,
+            203
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "name": "midjourney_imagenet",
+      "protocol": "matched: AI images resized to 220px and JPEG q75",
+      "n": 1562,
+      "metrics": {
+        "n": 1562,
+        "threshold": 0.5,
+        "accuracy": 0.6728553137003841,
+        "precision": 0.7172701949860725,
+        "recall": 0.6257594167679222,
+        "f1": 0.6683971447112266,
+        "specificity": 0.7253044654939107,
+        "false_positive_rate": 0.2746955345060893,
+        "false_negative_rate": 0.37424058323207776,
+        "roc_auc": 0.7532148300632853,
+        "pr_auc": 0.7728886694093149,
+        "log_loss": 0.8449312215951676,
+        "brier": 0.24090211822662647,
+        "ece": 0.18881528975324224,
+        "confusion_matrix": [
+          [
+            536,
+            203
+          ],
+          [
+            308,
+            515
+          ]
+        ]
+      }
+    }
+  ],
+  "notes": [
+    "labeled_deepfake: real and AI images differ in file format or resolution; the matched protocol removes that difference and is the fairer number.",
+    "midjourney_imagenet: real and AI images differ in file format or resolution; the matched protocol removes that difference and is the fairer number."
+  ]
+}

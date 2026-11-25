@@ -149,6 +149,15 @@ def test_robustness_covers_every_condition_on_a_balanced_subset(setup):
     assert all(c["n"] == 8 for c in conditions)  # 4 per class
 
 
+def test_predict_logits_with_worker_processes_and_a_robustness_transform(setup):
+    model, manifest, _, _ = setup
+    paths = manifest[manifest.split == "test"].path.tolist()[:6]
+    transform = CONDITIONS["jpeg_q50"][1]
+    # one batch of 6: the stand-in centres on its batch median, so batches must match the direct computation
+    with_workers = ev.predict_logits(model, paths, torch.device("cpu"), transform, batch_size=6, workers=2)
+    assert np.allclose(with_workers, direct_logits(model, paths, transform), atol=1e-5)
+
+
 def test_downsample_curve_keeps_ends_and_limits_size():
     xs, ys = np.linspace(0, 1, 1000), np.linspace(0, 1, 1000) ** 2
     dx, dy = ev.downsample_curve(xs, ys, max_points=50)

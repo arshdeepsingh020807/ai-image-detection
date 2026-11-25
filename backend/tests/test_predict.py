@@ -36,7 +36,7 @@ def test_supported_formats_match_independent_inference(shared_client, reference:
     assert body["confidence"] == pytest.approx(max(expected_p_ai, 1 - expected_p_ai), abs=1e-6)
     assert body["image"] == {"width": 300, "height": 200, "format": fmt, "size_bytes": len(data)}
     assert body["band"] == CARD["band"]
-    assert body["model"] == {"architecture": CARD["architecture"], "version": CARD["version"], "trained": False}
+    assert body["model"] == {"architecture": CARD["architecture"], "version": CARD["version"], "trained": CARD["trained"]}
     assert body["explanation"] is None
 
 
@@ -59,14 +59,18 @@ def test_temperature_is_applied(shared_client, reference: Reference, monkeypatch
 
 
 @pytest.mark.parametrize(
-    "offset_low, offset_high, label",
-    [(+1e-3, +2e-3, "real"), (-1e-3, +1e-3, "inconclusive"), (-2e-3, -1e-3, "ai_generated"), (0.0, 0.0, "real")],
+    "steps_low, steps_high, label",
+    [(+1, +2, "real"), (-1, +1, "inconclusive"), (-2, -1, "ai_generated"), (0, 0, "real")],
 )
-def test_label_follows_the_band(shared_client, reference: Reference, monkeypatch, offset_low, offset_high, label):
-    """Band edges are placed around this image's own (independently computed) p_ai to force each label."""
+def test_label_follows_the_band(shared_client, reference: Reference, monkeypatch, steps_low, steps_high, label):
+    """Band edges are placed around this image's own (independently computed) p_ai to force each label.
+
+    The step is a quarter of the room to the nearer end of [0, 1], so edges stay valid however confident the model is.
+    """
     data = encode(noise_image(96, 96, seed=4), "PNG")
     p_ai = reference.p_ai(data)
-    band = Band(low=p_ai + offset_low, high=p_ai + offset_high)
+    step = min(p_ai, 1 - p_ai) / 4
+    band = Band(low=p_ai + steps_low * step, high=p_ai + steps_high * step)
     monkeypatch.setattr(app_of(shared_client).state.runtime.detector.card, "band", band)
     body = upload(shared_client, data).json()
     assert body["label"] == label and body["band"] == band.model_dump()

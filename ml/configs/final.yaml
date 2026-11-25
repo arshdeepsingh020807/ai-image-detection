@@ -1,13 +1,14 @@
-# Full run for the selected architecture.
+# Full run for the selected architecture (MobileNetV3-Large, see model_comparison.json).
+# Epoch budget sized to the M2 GPU's measured ~100 images/s on 109k training images per epoch.
 pretrained: true
-epochs_head: 2
-epochs_finetune: 10
+epochs_head: 1
+epochs_finetune: 5
 lr_head: 0.001
 lr_finetune: 0.0001
 weight_decay: 0.0001
 batch_size: 32
 unfreeze: true
-patience: 3
+patience: 2
 num_workers: 4
 seed: 42
 out_dir: artifacts/checkpoints/final

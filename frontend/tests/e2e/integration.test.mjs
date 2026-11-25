@@ -22,7 +22,8 @@ describe("integration with the real backend", { skip: BACKEND ? false : "set BAC
     assert.match(await response.text(), /<div id="root">/);
   });
 
-  it("analyses a real upload with the untrained stand-in and shows the heatmap and warning", async () => {
+  it("analyses a real upload, shows the heatmap, and warns only if the served model is untrained", async () => {
+    const model = await (await fetch(`${BACKEND}/api/model`)).json();
     for (const theme of ["light", "dark"]) {
       const { page, errors } = await visit("/", { theme });
       const input = await page.waitForSelector("#image-input");
@@ -30,8 +31,10 @@ describe("integration with the real backend", { skip: BACKEND ? false : "set BAC
       await page.waitForSelector(".stage[data-loaded]");
       await clickButton(page, "Analyse image");
       await page.waitForSelector(".verdict__title", { timeout: 30_000 });
-      assert.match(await page.$eval(".notice--warning", (el) => el.textContent), /untrained stand-in/);
-      assert.notEqual(await page.$eval(".verdict__title", (el) => el.textContent), "Inconclusive");
+      const warning = await page.$(".notice--warning");
+      if (model.trained) assert.equal(warning, null, "a trained model must not show the untrained warning");
+      else assert.match(await warning.evaluate((el) => el.textContent), /untrained stand-in/);
+      assert.match(await page.$eval(".verdict__title", (el) => el.textContent), /^(Likely real|Likely AI-generated|Inconclusive)$/);
       assert.ok(await page.$eval(".stage__heatmap", (img) => img.complete && img.naturalWidth === 224));
       assert.deepEqual(await runAxe(page), []);
       assert.equal(await horizontalOverflow(page), 0);
@@ -58,11 +61,18 @@ describe("integration with the real backend", { skip: BACKEND ? false : "set BAC
     assert.deepEqual(errors.filter((e) => !e.includes("400")), []);
   });
 
-  it("renders the performance page from the real metrics without console errors", async () => {
+  it("renders every published metrics file (none rejected) and empty states only for missing ones", async () => {
+    const { available } = await (await fetch(`${BACKEND}/api/metrics`)).json();
+    const model = await (await fetch(`${BACKEND}/api/model`)).json();
     const { page, errors } = await visit("/performance");
     await page.waitForSelector("#dataset .stat-tiles");
-    assert.ok((await page.$$eval(".empty-state", (els) => els.length)) > 0, "unpublished files show empty states");
-    assert.match(await page.$eval("#model-card", (el) => el.textContent), /untrained stand-in/);
+    const text = await page.$eval("main", (el) => el.textContent);
+    assert.doesNotMatch(text, /could not be read/, "a real metrics file failed the dashboard's validation");
+    const empty = await page.$$eval(".empty-state", (els) => els.length);
+    if (available.length === 11) assert.equal(empty, 0, "all 11 files are published, so no section may be empty");
+    else assert.ok(empty > 0);
+    assert.match(await page.$eval("#model-card", (el) => el.textContent), new RegExp(model.version));
+    await screenshot(page, "integration-performance");
     assert.deepEqual(await runAxe(page), []);
     assert.deepEqual(errors, []);
   });

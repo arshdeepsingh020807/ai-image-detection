@@ -17,11 +17,12 @@ import torch
 from PIL import Image
 from scipy.special import expit
 from sklearn.metrics import precision_recall_curve, roc_curve
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 
 from detector_core.preprocess import prepare, to_rgb
 from ml.evaluation.metrics import band_metrics, choose_band, classification_metrics, fit_temperature
 from ml.evaluation.robustness import CONDITIONS, Transform, match_to_reference
+from ml.training.data import make_loader
 
 BAND_MAX_ERROR = 0.02
 
@@ -49,8 +50,8 @@ def predict_logits(
     workers: int = 4,
 ) -> np.ndarray:
     model.eval()
-    loader = DataLoader(ImageList(paths, transform), batch_size=batch_size, num_workers=workers)
-    out = [model(x.to(device)).squeeze(1).float().cpu() for x in loader]
+    loader = make_loader(ImageList(paths, transform), batch_size=batch_size, num_workers=workers)
+    out = [model(torch.from_numpy(x).to(device)).squeeze(1).float().cpu() for x in loader]
     return torch.cat(out).numpy() if out else np.zeros(0, dtype=np.float32)
 
 
