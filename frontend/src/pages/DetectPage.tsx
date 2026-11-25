@@ -33,7 +33,7 @@ export function DetectPage() {
   const model = useAsync(loadModel);
   const [explain, setExplain] = useState(true);
   const [heatmapVisible, setHeatmapVisible] = useState(true);
-  const [opacity, setOpacity] = useState(0.6);
+  const [opacity, setOpacity] = useState(0.9)  // the heatmap's own alpha already fades weak regions; 90% keeps strong ones visible;
   const focusTarget = useRef<HTMLHeadingElement>(null);
   const source = "source" in state ? state.source : null;
   const file = source?.file ?? null;

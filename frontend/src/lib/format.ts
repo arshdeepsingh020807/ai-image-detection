@@ -3,6 +3,10 @@ const nbsp = " ";
 export const formatPercent = (value: number | null | undefined, digits = 1): string =>
   value === null || value === undefined ? "—" : `${(value * 100).toFixed(digits)}%`;
 
+/** A model probability for display: never "100.0%" or "0.0%", which would read as certainty. */
+export const formatProbability = (value: number): string =>
+  value >= 0.9995 ? ">99.9%" : value <= 0.0005 ? "<0.1%" : formatPercent(value);
+
 export const formatDecimal = (value: number | null | undefined, digits = 3): string =>
   value === null || value === undefined ? "—" : value.toFixed(digits);
 

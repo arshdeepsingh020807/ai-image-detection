@@ -106,7 +106,7 @@ describe("DetectPage", () => {
     expect(heading).toHaveFocus();
     expect(screen.getByRole("status")).toHaveTextContent("Analysis complete. Verdict: Likely AI-generated.");
     expect(screen.getAllByText("93.0%").length).toBeGreaterThan(0);
-    expect(screen.getByText("fixture-v1")).toBeInTheDocument();
+    expect(screen.getByText((_, el) => el?.tagName === "CODE" && el.textContent === "fixture-v1")).toBeInTheDocument();
     expect(screen.getByText(/^Brighter, more opaque areas influenced the AI-generated score more\./)).toBeInTheDocument();
 
     const region = screen.getByTestId("heatmap-region");
@@ -116,7 +116,7 @@ describe("DetectPage", () => {
     expect(parseFloat(region.style.height)).toBeCloseTo(58.3333);
     const heatmap = within(region).getByRole("presentation", { hidden: true });
     expect(heatmap).toHaveAttribute("src", expect.stringMatching(/^data:image\/png;base64,iVBOR/));
-    expect(heatmap.style.opacity).toBe("0.6");
+    expect(heatmap.style.opacity).toBe("0.9");
   });
 
   it("lets the user hide the heatmap and change its opacity", async () => {

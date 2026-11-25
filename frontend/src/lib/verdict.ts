@@ -1,5 +1,5 @@
 import type { Band, Label, Prediction } from "../api/types";
-import { formatPercent } from "./format";
+import { formatPercent, formatProbability } from "./format";
 
 export const LABEL_TEXT: Record<Label, string> = {
   real: "Likely real",
@@ -18,7 +18,7 @@ export const describeBand = (band: Band): string =>
 
 export function summarise(prediction: Prediction): string {
   const { band, label } = prediction;
-  const pAi = formatPercent(prediction.probabilities.ai_generated);
+  const pAi = formatProbability(prediction.probabilities.ai_generated);
   if (label === "inconclusive") {
     return `The estimated probability of AI generation (${pAi}) falls inside the uncertainty band of ${formatPercent(band.low)} to ${formatPercent(band.high)}. In this range the model is not reliable enough to decide, so no verdict is given.`;
   }

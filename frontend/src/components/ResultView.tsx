@@ -1,6 +1,6 @@
 import type { Ref } from "react";
 import type { Prediction } from "../api/types";
-import { formatBytes, formatPercent } from "../lib/format";
+import { formatBytes, formatProbability } from "../lib/format";
 import { LABEL_TEXT, summarise } from "../lib/verdict";
 import { ProbabilityBar } from "./ProbabilityBar";
 import { TimingTable } from "./TimingTable";
@@ -17,7 +17,7 @@ export function ResultView({ result, headingRef }: { result: Prediction; heading
           <h2 className="verdict__title" ref={headingRef} tabIndex={-1}>{LABEL_TEXT[result.label]}</h2>
         </div>
         <p className="verdict__confidence">
-          <span className="verdict__confidence-value">{formatPercent(result.confidence)}</span>
+          <span className="verdict__confidence-value">{formatProbability(result.confidence)}</span>
           <span className="verdict__confidence-label">confidence</span>
         </p>
       </div>
@@ -37,7 +37,7 @@ export function ResultView({ result, headingRef }: { result: Prediction; heading
             <div><dt>Dimensions</dt><dd>{image.width} × {image.height} px</dd></div>
             <div><dt>Format</dt><dd>{image.format}, {formatBytes(image.size_bytes)}</dd></div>
             <div><dt>Model</dt><dd>{model.architecture}</dd></div>
-            <div><dt>Version</dt><dd><code>{model.version}</code></dd></div>
+            <div><dt>Version</dt><dd><code>{model.version.split("-").map((part, i) => (i ? <span key={i}>-<wbr />{part}</span> : part))}</code></dd></div>
             <div><dt>Heatmap</dt><dd>{explanation ? explanation.method : "Not requested"}</dd></div>
           </dl>
         </section>

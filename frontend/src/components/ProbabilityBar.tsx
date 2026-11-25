@@ -1,5 +1,5 @@
 import type { Band } from "../api/types";
-import { formatPercent } from "../lib/format";
+import { formatProbability } from "../lib/format";
 import { CLASS_TEXT, describeBand, hasBand } from "../lib/verdict";
 import { VerdictMark } from "./VerdictMark";
 
@@ -17,11 +17,11 @@ export function ProbabilityBar({ real, aiGenerated, band }: ProbabilityBarProps)
       <dl className="probability__legend">
         <div>
           <dt><VerdictMark label="real" size={12} />{CLASS_TEXT.real}</dt>
-          <dd>{formatPercent(real)}</dd>
+          <dd>{formatProbability(real)}</dd>
         </div>
         <div>
           <dt><VerdictMark label="ai_generated" size={12} />{CLASS_TEXT.ai_generated}</dt>
-          <dd>{formatPercent(aiGenerated)}</dd>
+          <dd>{formatProbability(aiGenerated)}</dd>
         </div>
       </dl>
       <div className="probability__track" aria-hidden="true">

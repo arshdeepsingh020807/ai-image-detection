@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatBytes, formatCount, formatDate, formatDecimal, formatMs, formatPercent, humanize } from "./format";
+import { formatBytes, formatCount, formatDate, formatDecimal, formatMs, formatPercent, formatProbability, humanize } from "./format";
 
 describe("format", () => {
   it("formats percentages and missing values", () => {
@@ -7,6 +7,17 @@ describe("format", () => {
     expect(formatPercent(1, 0)).toBe("100%");
     expect(formatPercent(null)).toBe("—");
     expect(formatPercent(undefined)).toBe("—");
+  });
+
+  it("never shows a probability as certain", () => {
+    expect(formatProbability(0.99976)).toBe(">99.9%");
+    expect(formatProbability(0.9995)).toBe(">99.9%");
+    expect(formatProbability(0.9994)).toBe("99.9%");
+    expect(formatProbability(0.00024)).toBe("<0.1%");
+    expect(formatProbability(0)).toBe("<0.1%");
+    expect(formatProbability(0.0005)).toBe("<0.1%");
+    expect(formatProbability(0.0006)).toBe("0.1%");
+    expect(formatProbability(0.5)).toBe("50.0%");
   });
 
   it("formats decimals", () => {
